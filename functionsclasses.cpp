@@ -36,7 +36,7 @@ double module360(double angle) {
 }
 
 bool is_free(double const street_angle, rbout& roundabout,
-             double const min_ang) {
+             double const min_ang, double const offset) {
   auto it = std::find_if(
       roundabout.carrbout().begin(), roundabout.carrbout().end(), [&](car& c) {
         return ((std::abs(std::abs(street_angle + offset - module360((c).theta())) *180 / M_PI) < min_ang) || (std::abs(std::abs(street_angle + offset - module360((c).theta())) * 180 / M_PI) > (360. - min_ang)));});
@@ -103,12 +103,12 @@ std::vector<car>& rbout::carrbout() { return car_rbout; }
 std::size_t rbout::size_rbout() const { return car_rbout.size(); }
 bool rbout::empty_rbout() const { return car_rbout.empty(); }
 
-void rbout::newcar_rbt(double const street_angle, int const mean) {
+void rbout::newcar_rbt(double const street_angle, int const mean, double offset) {
   car C = car(street_angle + offset, 0., random_call(n_roads(), mean), true);
   car_rbout.push_back(C);
 }
 
-void rbout::erase_rbt(std::vector<road> roads) {
+void rbout::erase_rbt(std::vector<road> roads, double offset) {
   car_rbout.erase(
       std::remove_if(car_rbout.begin(), car_rbout.end(),
                      [=](car& c) {
@@ -117,7 +117,7 @@ void rbout::erase_rbt(std::vector<road> roads) {
       car_rbout.end());
 }
 
-int rbout::transfer_rbt(std::vector<road> roads) {
+int rbout::transfer_rbt(std::vector<road> roads, const double offset) {
   auto it = std::find_if(car_rbout.begin(), car_rbout.end(), [&](car& c) {
     return module360(std::abs(c.theta() - roads[c.exit() - 1].angle() +
                               offset)) < 0.05;
@@ -125,7 +125,7 @@ int rbout::transfer_rbt(std::vector<road> roads) {
   if (it == car_rbout.end()) {
     return 0;
   } else {
-    return (*it).exit();
+    return it->exit();
   }
 }
 
@@ -163,7 +163,7 @@ std::size_t road::size_out() const { return car_out.size(); }
 bool road::empty_in() const { return car_in.empty(); }
 bool road::empty_out() const { return car_out.empty(); }
 
-void road::newcar_rd(bool const input, int rate, int const n_max) {
+void road::newcar_rd(bool const input, int rate, int const n_max, const double offset) {
   if (input) {
     if ((static_cast<int>(size_in()) < n_max) && (can_generate(rate))) {
       car C = car(0., 0., 0, false);
@@ -176,7 +176,7 @@ void road::newcar_rd(bool const input, int rate, int const n_max) {
 }
 
 void road::evolve_rd(bool const input, rbout& roundabout, double const min_ang,
-                     double v_road, double v_rbout, double dist_from_rbout, double min_dist) {
+                     double v_road, double v_rbout, double dist_from_rbout, double min_dist, double const offset, double const amp) {
   if (input) {
     for (int i = 0; i < static_cast<int>(size_in()); i++) {
       if ((i == 0) &&
@@ -184,10 +184,10 @@ void road::evolve_rd(bool const input, rbout& roundabout, double const min_ang,
         car_in[i].evolve_tplus(v_road);
       }
       if (car_in[i].can_I_enter()) {
-        car_in[i].evolve_tplus(v_road);
+        car_in[i].evolve_tplus(amp*v_road);
       }
       if ((i == 0) && ((car_in[i]).t() >= dist_from_rbout) &&
-          (is_free(angle(), roundabout, min_ang)) &&
+          (is_free(angle(), roundabout, min_ang, offset)) &&
           (!car_in[i].can_I_enter())) {
         car_in[i].evolve_tplus(v_road);
         car_in[i].can_I_enter_Y();

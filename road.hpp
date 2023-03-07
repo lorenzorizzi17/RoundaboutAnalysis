@@ -18,8 +18,8 @@ class road {
   std::size_t size_out() const;
   bool empty_in() const;
   bool empty_out() const;
-  void newcar_rd(bool const, int, const int);
-  void evolve_rd(bool const, rbout&, double const, double, double, double, double);
+  void newcar_rd(bool const, int, const int, const double);
+  void evolve_rd(bool const, rbout&, double const, double, double, double, double, const double, const double);
   bool transfer_rd();
   void erase_rd();
 };

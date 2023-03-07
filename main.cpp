@@ -6,24 +6,34 @@
 
 #include "road.hpp"
 #include "functions.hpp"
-
+// per l'offset, ho che tan(alfa) = (0.5*widthRoad)/((radius+widthRoundabout-0.1*radius))
 int main() {
   try {
-    unsigned const display_height =
-        0.9 * sf::VideoMode::getDesktopMode().height;
-    const double radius = 0.25 * display_height;
-    const double lcar = 2*0.0991*radius;
-    const double lroad = 0.8*radius;
+    //graphic constants
+    unsigned const display_height = 0.95 * sf::VideoMode::getDesktopMode().height;
+    int const fps = 60;
+    
+    const double radius = 0.2 * display_height;
+    const double lenghtCar = 4*0.0991*radius;
+    const double widthCar = 4*0.0416*radius;
+    const double lenghtRoad = 1.2*radius;
+    const double widthRoad = 0.8*radius ;
+    const double widthRoundabout = 0.25*radius;
+    
+    //simulation parameters
+    int const N_ROADS = 4;
+    const double x = 0.25;
+    const double amplificationTransfer = 1.5;
+    const double offset = std::atan(((0.3*widthRoad))/((radius+widthRoundabout-x*radius)));
     const double v_road = 2;
     const double v_rbout = 1.85;
-    const double dist_from_rbout = 0.75;
-    const double min_dist_road = 1.25*lcar/lroad;
-    const double n_max_car = 3;
-    int const N_ROADS = 4;
+    const double dist_from_rbout = (radius -lenghtCar)/radius;
+    const double min_dist_road = 0.15*lenghtCar;
+    const double n_max_car = 2;
     int const rate = 15;
     int const mean_exit = 3;
-    double minimum_angle = 45.;
-    int const fps = 60;
+    double minimum_angle = 35;
+    
 
     if (minimum_angle >= 360. || minimum_angle < 0.) {
       throw std::runtime_error{
@@ -89,13 +99,13 @@ int main() {
       texturecar.setSmooth(true);
 
 
-      sf::CircleShape cerchio1(1.15 * radius);
-      sf::CircleShape cerchio2(0.85 * radius);
+      sf::CircleShape cerchio1(radius+widthRoundabout);
+      sf::CircleShape cerchio2(radius-widthRoundabout);
       cerchio1.setTexture(&texture);
-      cerchio1.setPosition(0.5 * display_height - 1.15 * radius,
-                           0.5 * display_height - 1.15 * radius);
-      cerchio2.setPosition(0.5 * display_height - 0.85 * radius,
-                           0.5 * display_height - 0.85 * radius);
+      cerchio1.setPosition(0.5 * display_height - radius-widthRoundabout,
+                           0.5 * display_height - radius-widthRoundabout);
+      cerchio2.setPosition(0.5 * display_height - radius+widthRoundabout,
+                           0.5 * display_height - radius+widthRoundabout);
       while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -106,62 +116,61 @@ int main() {
         window.clear(sf::Color::White);
         window.draw(cerchio1);
         window.draw(cerchio2);
-        double l = 0.8 * radius;
         for (int i = 0; i < roundabout.n_roads(); i++) {
-          sf::RectangleShape strada(sf::Vector2f(l, 0.4 * radius));
-          strada.setOrigin(0.5 * l, 0.5 * 0.4 * radius);
+          sf::RectangleShape strada(sf::Vector2f(lenghtRoad, widthRoad));
+          strada.setOrigin(0.5 * lenghtRoad, 0.5 * widthRoad);
           strada.setTexture(&texture2);
           strada.setPosition(
               0.5 * display_height +
-                  (std::cos(roads[i].angle())) * (radius + 0.5 * l),
+                  (std::cos(roads[i].angle())) * ((radius+widthRoundabout-x*radius) + 0.5 * lenghtRoad),
               0.5 * display_height -
-                  (std::sin(roads[i].angle())) * (radius + 0.5 * l));
+                  (std::sin(roads[i].angle())) * ((radius+widthRoundabout-x*radius) + 0.5 * lenghtRoad));
           strada.rotate(-roads[i].angle() * (180 / M_PI));  // in gradi
           window.draw(strada);
         }
 
         for (auto it = roads.begin(); it != roads.end(); ++it) {
           std::sort(roundabout.carrbout().begin(),roundabout.carrbout().end(), myfunction);
-          (*it).newcar_rd(true, rate, n_max_car);
-          (*it).evolve_rd(true, roundabout, minimum_angle, v_road, v_rbout, dist_from_rbout, min_dist_road);
+          (*it).newcar_rd(true, rate, n_max_car, offset);
+          (*it).evolve_rd(true, roundabout, minimum_angle, v_road, v_rbout, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
           if (it->transfer_rd()) {
-            roundabout.newcar_rbt(it->angle(), mean_exit);
+            roundabout.newcar_rbt(it->angle(), mean_exit, offset);
           }
           it->erase_rd();
-          if (roundabout.transfer_rbt(roads) > 0) {
-            auto a = roundabout.transfer_rbt(roads);
-            (roads[a - 1]).newcar_rd(false, rate, n_max_car);
+          if (roundabout.transfer_rbt(roads, offset) > 0) {
+            auto a = roundabout.transfer_rbt(roads, offset);
+            (roads[a - 1]).newcar_rd(false, rate, n_max_car, offset);
           }
-          roundabout.erase_rbt(roads);
-          it->evolve_rd(false, roundabout, minimum_angle, v_road, v_rbout, dist_from_rbout, min_dist_road);
+          roundabout.erase_rbt(roads, offset);
+          it->evolve_rd(false, roundabout, minimum_angle, v_road, v_rbout, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
 
           for (car& c : it->carin()) {
-            sf::RectangleShape pallino(sf::Vector2f(2*0.0416*radius,2*0.0991*radius));
+            sf::RectangleShape pallino(sf::Vector2f(widthCar,lenghtCar));
             pallino.setTexture(&texturecar);
             pallino.setOrigin(0.0416*radius,0.0991*radius);
             pallino.rotate(180/M_PI *(M_PI/2-(it->angle())));
             pallino.setPosition(0.5 * display_height +
                                     radius * std::cos(it->angle() + offset) -
-                                    l * std::cos(M_PI - it->angle()) +
-                                    c.t() * l * std::cos(M_PI - it->angle()),
+                                    lenghtRoad * std::cos(M_PI - it->angle()) +
+                                    c.t() * lenghtRoad * std::cos(M_PI - it->angle()),
                                 0.5 * display_height -
                                     radius * std::sin(it->angle() + offset) -
-                                    l * std::sin(M_PI - it->angle()) +
-                                    c.t() * l * std::sin(M_PI - it->angle()));
+                                    lenghtRoad * std::sin(M_PI - it->angle()) +
+                                    c.t() * lenghtRoad * std::sin(M_PI - it->angle()));
             window.draw(pallino);
           }
           for (car& c_ : it->carout()) {
-            sf::RectangleShape pallino_(sf::Vector2f(2*0.0416*radius,2*0.0991*radius));
+            sf::RectangleShape pallino_(sf::Vector2f(widthCar,lenghtCar));
             pallino_.setTexture(&texturecar);
             pallino_.setOrigin(0.0416*radius,0.0991*radius);
             pallino_.rotate(180/M_PI *(M_PI/2-(it->angle())));
             pallino_.setPosition(
-                0.5 * display_height + radius * std::cos(it->angle() - offset) - l * std::cos(M_PI - it->angle()) + c_.t() * l * std::cos(M_PI - it->angle()),
-                0.5 * display_height - radius * std::sin(it->angle() - offset) -l * std::sin(M_PI - it->angle()) + c_.t() * l * std::sin(M_PI - it->angle()));
+                0.5 * display_height + radius * std::cos(it->angle() - offset) - lenghtRoad * std::cos(M_PI - it->angle()) + c_.t() * lenghtRoad * std::cos(M_PI - it->angle()),
+                0.5 * display_height - radius * std::sin(it->angle() - offset) - lenghtRoad * std::sin(M_PI - it->angle()) + c_.t() * lenghtRoad * std::sin(M_PI - it->angle()));
             window.draw(pallino_);
           }
           for (car& d : roundabout.carrbout()) {
-            sf::RectangleShape pallino__(sf::Vector2f(2*0.0416*radius,2*0.0991*radius));
+            sf::RectangleShape pallino__(sf::Vector2f(widthCar,lenghtCar));
             pallino__.setTexture(&texturecar);
             double x = 0.5 * display_height + radius * std::cos(d.theta());
             double y = 0.5 * display_height - radius * std::sin(d.theta());

@@ -2,7 +2,7 @@
 #define CAR_H
 
 
-constexpr double offset = 0.0705682;
+
 
 class car {
  private:

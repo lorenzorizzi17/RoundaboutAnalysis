@@ -9,7 +9,7 @@ int random_call(int const, int const);
 
 double module360(double);
 
-bool is_free(double const, rbout &, double const);
+bool is_free(double const, rbout &, double const, double const);
 
 bool myfunction(car const&, car const&);
 
