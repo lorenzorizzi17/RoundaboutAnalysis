@@ -20,10 +20,10 @@ bool can_generate(int const rate) {
 }
 
 int random_call(int const max_exit, int const mean) {
-  std::poisson_distribution<int> poisson(mean);
-  int assigned_exit = poisson(engine);
+  std::uniform_int_distribution<int> unif(1,max_exit);
+  int assigned_exit = unif(engine);
   while ((assigned_exit > max_exit) || (assigned_exit == 0)) {
-    assigned_exit = poisson(engine);
+    assigned_exit = unif(engine);
   }
   return assigned_exit;
 }

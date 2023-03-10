@@ -22,7 +22,7 @@ int main() {
     
     //simulation parameters
     int const N_ROADS = 4;
-    const double rates[N_ROADS] = {0,45,0,1};
+    const double rates[N_ROADS] = {0,45,0,15};
     const double x = 0.25;
     const double amplificationTransfer = 1.5;
     const double offset = std::atan(((0.3*widthRoad))/((radius+widthRoundabout-x*radius)));
