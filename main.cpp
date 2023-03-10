@@ -22,6 +22,7 @@ int main() {
     
     //simulation parameters
     int const N_ROADS = 4;
+    const double rates[N_ROADS] = {0,45,0,1};
     const double x = 0.25;
     const double amplificationTransfer = 1.5;
     const double offset = std::atan(((0.3*widthRoad))/((radius+widthRoundabout-x*radius)));
@@ -47,7 +48,7 @@ int main() {
 
     std::vector<road> roads;
     for (int k = 0; k < roundabout.n_roads(); k++) {
-      road strada_test(2 * k * M_PI / roundabout.n_roads());
+      road strada_test(2 * k * M_PI / roundabout.n_roads(), rates[k]);
       roads.push_back(strada_test);
     }
 
@@ -131,8 +132,8 @@ int main() {
 
         for (auto it = roads.begin(); it != roads.end(); ++it) {
           std::sort(roundabout.carrbout().begin(),roundabout.carrbout().end(), myfunction);
-          (*it).newcar_rd(true, rate, n_max_car, offset);
-          (*it).evolve_rd(true, roundabout, minimum_angle, v_road, v_rbout, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
+          (*it).newcar_rd(true, it->rate(), n_max_car, offset);
+          (*it).evolve_rd(true, roundabout, minimum_angle, v_road, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
           if (it->transfer_rd()) {
             roundabout.newcar_rbt(it->angle(), mean_exit, offset);
           }
@@ -142,7 +143,7 @@ int main() {
             (roads[a - 1]).newcar_rd(false, rate, n_max_car, offset);
           }
           roundabout.erase_rbt(roads, offset);
-          it->evolve_rd(false, roundabout, minimum_angle, v_road, v_rbout, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
+          it->evolve_rd(false, roundabout, minimum_angle, v_road, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
 
           for (car& c : it->carin()) {
             sf::RectangleShape pallino(sf::Vector2f(widthCar,lenghtCar));

@@ -156,6 +156,7 @@ void rbout::evolve_rbt(std::vector<road> roads, double v_rbout) {
 ///////////////////////////////////////
 
 double road::angle() const { return angle_; }
+double road::rate() const {return rate_;}
 std::vector<car>& road::carin() { return car_in; }
 std::vector<car>& road::carout() { return car_out; }
 std::size_t road::size_in() const { return car_in.size(); }
@@ -176,7 +177,7 @@ void road::newcar_rd(bool const input, int rate, int const n_max, const double o
 }
 
 void road::evolve_rd(bool const input, rbout& roundabout, double const min_ang,
-                     double v_road, double v_rbout, double dist_from_rbout, double min_dist, double const offset, double const amp) {
+                     double v_road, double dist_from_rbout, double min_dist, double const offset, double const amp) {
   if (input) {
     for (int i = 0; i < static_cast<int>(size_in()); i++) {
       if ((i == 0) &&
