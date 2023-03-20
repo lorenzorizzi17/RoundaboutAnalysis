@@ -24,20 +24,16 @@ int main() {
     
     //simulation parameters
     int const N_ROADS = 4;
-    const double rates[N_ROADS] = {0,45,0,15};
+    const double rates[N_ROADS] = {5,45,15,15};
     const double amplificationTransfer = 1.5;
     const double v_road = 3;
     const double v_rbout = 2.85;
     const double dist_from_rbout = (radius -lenghtCar)/radius;
     const double min_dist_road = 1.2*(lenghtCar/lenghtRoad);
     const double n_max_car = 2;
-    double minimum_angle = 35;
-    
+    const double minimum_angle_behind = 50;
+    const double minimum_angle_ahead = 20;
 
-    if (minimum_angle >= 360. || minimum_angle < 0.) {
-      throw std::runtime_error{
-          "Modificare l'angolo minimo tra gli oggetti car in rotonda."};
-    }
 
     rbout roundabout(N_ROADS, radius);
 
@@ -128,7 +124,7 @@ int main() {
         for (auto it = roads.begin(); it != roads.end(); ++it) {
           std::sort(roundabout.carrbout().begin(),roundabout.carrbout().end(), myfunction);
           (*it).newcar_rd(true, it->rate(), n_max_car, offset);
-          (*it).evolve_rd(true, roundabout, minimum_angle, v_road, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
+          (*it).evolve_rd(true, roundabout, minimum_angle_ahead, minimum_angle_behind, v_road, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
           if (it->transfer_rd()) {
             roundabout.newcar_rbt(it->angle(), offset);
           }
@@ -138,7 +134,7 @@ int main() {
             (roads[a - 1]).newcar_rd(false, 0, n_max_car, offset);
           }
           roundabout.erase_rbt(roads, offset);
-          it->evolve_rd(false, roundabout, minimum_angle, v_road, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
+          it->evolve_rd(false, roundabout, 0,0, v_road, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
 
           for (car& c : it->carin()) {
             sf::RectangleShape pallino(sf::Vector2f(widthCar,lenghtCar));

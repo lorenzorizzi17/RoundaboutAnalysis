@@ -36,16 +36,19 @@ double module360(double angle) {              //equivalent to mod360
 }
 
 bool is_free(double const street_angle, rbout& roundabout,    //check if there's space in the rbout for a car to enter
-             double const min_ang, double const offset) {
+             double const min_ang_behind, double const min_ang_ahead, double const offset) {
   auto it = std::find_if(
       roundabout.carrbout().begin(), roundabout.carrbout().end(), [&](car& c) {
-        return ((std::abs(std::abs(street_angle + offset - module360((c).theta())) *180 / M_PI) < min_ang) || (std::abs(std::abs(street_angle + offset - module360((c).theta())) * 180 / M_PI) > (360. - min_ang)));});
+        return ((-min_ang_behind < (street_angle + offset - module360((c).theta()))*180 / M_PI)&&((street_angle + offset - module360((c).theta()))*180 / M_PI< min_ang_ahead));});
   if (it != roundabout.carrbout().end()) {
     return false;
   } else {
     return true;
   }
 }
+
+//(std::abs(std::abs(street_angle + offset - module360((c).theta())) *180 / M_PI) < min_ang) || (std::abs(std::abs(street_angle + offset - module360((c).theta())) * 180 / M_PI) > (360. - min_ang))
+
 
 
 bool myfunction(car const& c1, car const& c2) {    
@@ -176,7 +179,7 @@ void road::newcar_rd(bool const input, int rate, int const n_max, const double o
   }
 }
 
-void road::evolve_rd(bool const input, rbout& roundabout, double const min_ang,
+void road::evolve_rd(bool const input, rbout& roundabout, double const min_ang_behind, double const min_ang_ahead,
                      double v_road, double dist_from_rbout, double min_dist, double const offset, double const amp) {
   if (input) {
     for (int i = 0; i < static_cast<int>(size_in()); i++) {
@@ -184,7 +187,7 @@ void road::evolve_rd(bool const input, rbout& roundabout, double const min_ang,
         if((car_in[i]).t() < dist_from_rbout){
             car_in[i].evolve_tplus(v_road);
         } else {
-          if((is_free(angle(), roundabout, min_ang, offset))&&(!car_in[i].can_I_enter())){
+          if((is_free(angle(), roundabout, min_ang_behind, min_ang_ahead, offset))&&(!car_in[i].can_I_enter())){
             car_in[i].evolve_tplus(v_road);
             car_in[i].can_I_enter_Y();
           }

@@ -35,7 +35,7 @@ TEST_CASE("Corretto avanzamento nella rotonda") {
 }
 
 TEST_CASE(
-    "Corretto funzionamento della funzione is_free(): ci sono macchine a cui "
+    "Corretto funzionamento della funzione is_free_forward(): ci sono macchine a cui "
     "dare precedenza") {
   rbout roundabout(4, 1);
   road road(M_PI / 2);
@@ -46,20 +46,20 @@ TEST_CASE(
            // Così facendo, un'eventuale macchina che si trovi a voler
            // entrare in rotonda, dovrà fermarsi per dare precedenza (nel
            // main minimum_angle è pari a 10 )
-  CHECK(is_free(M_PI / 2, roundabout, 10.) ==
-        false);  //  la funzione is_free dovrebbe ritornare false
+  CHECK(is_free_forward(M_PI / 2, roundabout, 10.) ==
+        false);  //  la funzione is_free_forward dovrebbe ritornare false
 }
 
 TEST_CASE(
-    "Corretto funzionamento della funzione is_free(): non ci sono macchine a "
+    "Corretto funzionamento della funzione is_free_forward(): non ci sono macchine a "
     "cui dare precedenza") {
   rbout roundabout{4, 1};
   roundabout.newcar_rbt(
       M_PI / 2 + 0.1844,
       2);  // come sopra, ma stavolta l'angolo è superiore a minimum_angle
            // e la macchina non dovrebbe dare precedenza
-  CHECK(is_free(M_PI / 2, roundabout, 10.) ==
-        true);  // la funzione is_free dovrebbe ritornare true
+  CHECK(is_free_forward(M_PI / 2, roundabout, 10.) ==
+        true);  // la funzione is_free_forward dovrebbe ritornare true
 }
 
 TEST_CASE(
