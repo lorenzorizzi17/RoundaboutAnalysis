@@ -19,28 +19,24 @@ int main() {
     const double lenghtRoad = 1.2*radius;
     const double widthRoad = 0.8*radius ;
     const double widthRoundabout = 0.25*radius;
+    const double x = 0.25;
+    const double offset = std::atan(((0.3*widthRoad))/((radius+widthRoundabout-x*radius)));
     
     //simulation parameters
     int const N_ROADS = 4;
     const double rates[N_ROADS] = {0,45,0,15};
-    const double x = 0.25;
     const double amplificationTransfer = 1.5;
-    const double offset = std::atan(((0.3*widthRoad))/((radius+widthRoundabout-x*radius)));
     const double v_road = 3;
     const double v_rbout = 2.85;
     const double dist_from_rbout = (radius -lenghtCar)/radius;
     const double min_dist_road = 1.2*(lenghtCar/lenghtRoad);
     const double n_max_car = 2;
-    int const mean_exit = 3;
     double minimum_angle = 35;
     
 
     if (minimum_angle >= 360. || minimum_angle < 0.) {
       throw std::runtime_error{
           "Modificare l'angolo minimo tra gli oggetti car in rotonda."};
-    }
-    if ((mean_exit > N_ROADS) || (mean_exit <= 0)) {
-      throw std::runtime_error{"Modificare il parametro di uscita media."};
     }
 
     rbout roundabout(N_ROADS, radius);
