@@ -1,2 +1,2 @@
 1) Cambiare nome di can_I_enter
-2)
+2) meccanismo di distinzione avanti e retro per ingresso macchine

@@ -5,7 +5,7 @@
 
 bool spawn(int const);
 
-int random_call(int const, int const);
+int random_call(int const);
 
 double module360(double);
 

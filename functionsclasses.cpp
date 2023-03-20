@@ -19,7 +19,7 @@ bool spawn(int const rate) {                        //decides whether a road sho
   return false;
 }
 
-int random_call(int const max_exit, int const mean) {   //extract a random exit
+int random_call(int const max_exit) {   //extract a random exit
   std::uniform_int_distribution<int> unif(1,max_exit);
   int assigned_exit = unif(engine);
   while ((assigned_exit > max_exit) || (assigned_exit == 0)) {
@@ -103,8 +103,8 @@ std::vector<car>& rbout::carrbout() { return car_rbout; }
 std::size_t rbout::size_rbout() const { return car_rbout.size(); }
 bool rbout::empty_rbout() const { return car_rbout.empty(); }
 
-void rbout::newcar_rbt(double const street_angle, int const mean, double offset) {
-  car C = car(street_angle + offset, 0., random_call(n_roads(), mean), true);
+void rbout::newcar_rbt(double const street_angle, double const offset) {
+  car C = car(street_angle + offset, 0., random_call(n_roads()), true);
   car_rbout.push_back(C);
 }
 

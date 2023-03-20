@@ -12,7 +12,7 @@ int main() {
     //graphic constants
     unsigned const display_height = 0.95 * sf::VideoMode::getDesktopMode().height;
     int const fps = 60;
-    
+    //geometric constants
     const double radius = 0.2 * display_height;
     const double lenghtCar = 4*0.0991*radius;
     const double widthCar = 4*0.0416*radius;
@@ -26,12 +26,11 @@ int main() {
     const double x = 0.25;
     const double amplificationTransfer = 1.5;
     const double offset = std::atan(((0.3*widthRoad))/((radius+widthRoundabout-x*radius)));
-    const double v_road = 2;
-    const double v_rbout = 1.85;
+    const double v_road = 3;
+    const double v_rbout = 2.85;
     const double dist_from_rbout = (radius -lenghtCar)/radius;
-    const double min_dist_road = 0.15*lenghtCar;
+    const double min_dist_road = 1.2*(lenghtCar/lenghtRoad);
     const double n_max_car = 2;
-    int const rate = 15;
     int const mean_exit = 3;
     double minimum_angle = 35;
     
@@ -135,12 +134,12 @@ int main() {
           (*it).newcar_rd(true, it->rate(), n_max_car, offset);
           (*it).evolve_rd(true, roundabout, minimum_angle, v_road, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
           if (it->transfer_rd()) {
-            roundabout.newcar_rbt(it->angle(), mean_exit, offset);
+            roundabout.newcar_rbt(it->angle(), offset);
           }
           it->erase_rd();
           if (roundabout.transfer_rbt(roads, offset) > 0) {
             auto a = roundabout.transfer_rbt(roads, offset);
-            (roads[a - 1]).newcar_rd(false, rate, n_max_car, offset);
+            (roads[a - 1]).newcar_rd(false, 0, n_max_car, offset);
           }
           roundabout.erase_rbt(roads, offset);
           it->evolve_rd(false, roundabout, minimum_angle, v_road, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
