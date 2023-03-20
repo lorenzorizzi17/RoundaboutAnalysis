@@ -31,8 +31,8 @@ int main() {
     const double dist_from_rbout = (radius -lenghtCar)/radius;
     const double min_dist_road = 1.2*(lenghtCar/lenghtRoad);
     const double n_max_car = 2;
-    const double minimum_angle_behind = 50;
-    const double minimum_angle_ahead = 20;
+    const double minimum_angle_behind = 45;
+    const double minimum_angle_ahead = 25;
 
 
     rbout roundabout(N_ROADS, radius);
