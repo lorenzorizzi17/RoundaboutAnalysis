@@ -3,7 +3,7 @@
 
 #include "road.hpp"
 
-bool can_generate(int const);
+bool spawn(int const);
 
 int random_call(int const, int const);
 

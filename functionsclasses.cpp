@@ -5,12 +5,12 @@
 #include "functions.hpp"
 
 ////////////////////////////////////////////////////
-/////            funzioni libere              //////
+/////            free functions               //////
 ////////////////////////////////////////////////////
 std::random_device rd;
 std::default_random_engine engine(rd());
 
-bool can_generate(int const rate) {
+bool spawn(int const rate) {                        //decides whether a road should spawn a car
   std::uniform_int_distribution<int> unif(1, 1000);
   int const test = unif(engine);
   if (test <= rate) {
@@ -19,7 +19,7 @@ bool can_generate(int const rate) {
   return false;
 }
 
-int random_call(int const max_exit, int const mean) {
+int random_call(int const max_exit, int const mean) {   //extract a random exit
   std::uniform_int_distribution<int> unif(1,max_exit);
   int assigned_exit = unif(engine);
   while ((assigned_exit > max_exit) || (assigned_exit == 0)) {
@@ -28,14 +28,14 @@ int random_call(int const max_exit, int const mean) {
   return assigned_exit;
 }
 
-double module360(double angle) {
+double module360(double angle) {              //equivalent to mod360
   while (angle >= 0.) {
     angle = angle - 2 * M_PI;
   }
   return angle + 2 * M_PI;
 }
 
-bool is_free(double const street_angle, rbout& roundabout,
+bool is_free(double const street_angle, rbout& roundabout,    //check if there's space in the rbout for a car to enter
              double const min_ang, double const offset) {
   auto it = std::find_if(
       roundabout.carrbout().begin(), roundabout.carrbout().end(), [&](car& c) {
@@ -48,12 +48,12 @@ bool is_free(double const street_angle, rbout& roundabout,
 }
 
 
-bool myfunction(car const& c1, car const& c2) {
+bool myfunction(car const& c1, car const& c2) {    
   return module360(c2.theta()) > module360(c1.theta());
 }
 
 
-double distance_from_road(car const& c, std::vector<road>const& roads) {
+double distance_from_road(car const& c, std::vector<road>const& roads) {   
   if (module360(c.theta()) < roads[c.exit()-1].angle()) {
     return (-module360(c.theta()) + roads[c.exit()-1].angle());
   } else {
@@ -81,7 +81,7 @@ int to_int(double a) {
 }
 
 /////////////////////////////////////////
-///////      funzioni car        ////////
+///////      car functions        ////////
 /////////////////////////////////////////
 
 double car::theta() const { return theta_; }
@@ -94,7 +94,7 @@ void car::evolve_tminus(double v) { t_ -= 0.01*v; }
 void car::evolve_ang(double v) { theta_ += 0.0075*v; }
 
 ////////////////////////////////////////
-//////    funzioni rotonda   ///////////
+//////    rbout functions   ///////////
 ////////////////////////////////////////
 
 int rbout::n_roads() const { return n_roads_; }
@@ -134,7 +134,7 @@ void rbout::evolve_rbt(std::vector<road> roads, double v_rbout) {
     for (auto it = car_rbout.begin(); it != car_rbout.end(); ++it) {
       std::sort(car_rbout.begin(),car_rbout.end(),myfunction);
       double const angle_difference = distance_from_road(*it,roads);
-      if (std::abs(module360(angle_difference)) >= 0.05) {
+      if (std::abs(module360(angle_difference)) >= 0.05) {  //
         if (it != car_rbout.end()-1) {
           it->evolve_ang(v_rbout);
         } else {
@@ -152,7 +152,7 @@ void rbout::evolve_rbt(std::vector<road> roads, double v_rbout) {
 }
 
 ///////////////////////////////////////
-//////      funzioni road      ////////
+//////      road functions      ////////
 ///////////////////////////////////////
 
 double road::angle() const { return angle_; }
@@ -166,7 +166,7 @@ bool road::empty_out() const { return car_out.empty(); }
 
 void road::newcar_rd(bool const input, int rate, int const n_max, const double offset) {
   if (input) {
-    if ((static_cast<int>(size_in()) < n_max) && (can_generate(rate))) {
+    if ((static_cast<int>(size_in()) < n_max) && (spawn(rate))) {
       car C = car(0., 0., 0, false);
       car_in.push_back(C);
     }
@@ -180,20 +180,19 @@ void road::evolve_rd(bool const input, rbout& roundabout, double const min_ang,
                      double v_road, double dist_from_rbout, double min_dist, double const offset, double const amp) {
   if (input) {
     for (int i = 0; i < static_cast<int>(size_in()); i++) {
-      if ((i == 0) &&
-          ((car_in[i]).t() < dist_from_rbout)) {  // prima macchina non ancora a dist_from_rbout
-        car_in[i].evolve_tplus(v_road);
+      if (i==0){
+        if((car_in[i]).t() < dist_from_rbout){
+            car_in[i].evolve_tplus(v_road);
+        } else {
+          if((is_free(angle(), roundabout, min_ang, offset))&&(!car_in[i].can_I_enter())){
+            car_in[i].evolve_tplus(v_road);
+            car_in[i].can_I_enter_Y();
+          }
+        }
       }
       if (car_in[i].can_I_enter()) {
         car_in[i].evolve_tplus(amp*v_road);
       }
-      if ((i == 0) && ((car_in[i]).t() >= dist_from_rbout) &&
-          (is_free(angle(), roundabout, min_ang, offset)) &&
-          (!car_in[i].can_I_enter())) {
-        car_in[i].evolve_tplus(v_road);
-        car_in[i].can_I_enter_Y();
-      }
-
       if ((i != 0) && ((car_in[i]).t() < dist_from_rbout) &&
           (std::abs((car_in[i]).t() - (car_in[i - 1]).t()) > min_dist)) {
         car_in[i].evolve_tplus(v_road);
