@@ -24,14 +24,14 @@ int main() {
     
     //simulation parameters
     int const N_ROADS = 4;
-    const double rates[N_ROADS] = {5,5,5,5};
+    const double rates[N_ROADS] = {25,25,25,25};
     const double amplificationTransfer = 1.2;
     const double v_road = 3;
     const double v_rbout = 2.85;
     const double dist_from_rbout = (radius -lenghtCar)/radius;
     const double min_dist_road = 1.2*(lenghtCar/lenghtRoad);
     const double n_max_car = 100;
-    const double minimum_angle_behind = 45;
+    const double minimum_angle_behind = 50;
     const double minimum_angle_ahead = 25;
 
 

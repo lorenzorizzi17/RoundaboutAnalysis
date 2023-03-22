@@ -39,7 +39,7 @@ bool is_free(double const street_angle, rbout& roundabout,    //check if there's
              double const min_ang_behind, double const min_ang_ahead, double const offset) {
   auto it = std::find_if(
       roundabout.carrbout().begin(), roundabout.carrbout().end(), [&](car& c) {
-        return ((-min_ang_behind < (street_angle + offset - module360((c).theta()))*180 / M_PI)&&((street_angle + offset - module360((c).theta()))*180 / M_PI< min_ang_ahead));});
+        return (((-min_ang_behind < (street_angle + offset - module360((c).theta()))*180 / M_PI)&&((street_angle + offset - module360((c).theta()))*180 / M_PI< min_ang_ahead))||((std::abs(std::abs(street_angle + offset - module360((c).theta())) * 180 / M_PI) > (360. - min_ang_ahead))));});
   if (it != roundabout.carrbout().end()) {
     return false;
   } else {
