@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
+#include<algorithm>
 
 #include "road.hpp"
 #include "functions.hpp"
@@ -11,7 +12,7 @@
 int main() {
   try {
     //graphic constants
-    unsigned const display_height = 0.95 * sf::VideoMode::getDesktopMode().height;
+    unsigned const display_height = 0.95 * sf::VideoMode::getDesktopMode().height; //=768
     int const fps = 60;
     //geometric constants
     const double radius = 0.2 * display_height;
