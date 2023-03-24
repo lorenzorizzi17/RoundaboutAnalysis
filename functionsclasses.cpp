@@ -47,6 +47,8 @@ bool is_free(double const street_angle, rbout& roundabout,    //check if there's
   }
 }
 
+
+
 //(std::abs(std::abs(street_angle + offset - module360((c).theta())) *180 / M_PI) < min_ang) || (std::abs(std::abs(street_angle + offset - module360((c).theta())) * 180 / M_PI) > (360. - min_ang))
 
 
