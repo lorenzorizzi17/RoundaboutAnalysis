@@ -24,7 +24,7 @@ int main() {
     
     //simulation parameters
     int const N_ROADS = 4;
-    const double rates[N_ROADS] = {8,8,8,8};  //calcola flusso di ingresso
+    const double rates[N_ROADS] = {9,9,9,9};  //calcola flusso di ingresso
     const double amplificationTransfer = 1.2;
     const double v_road = 3;
     const double v_rbout = 2.85;
@@ -50,8 +50,8 @@ int main() {
         throw std::runtime_error{"Modificare il numero di strade."};
     }
 
-    double b =0;
-    while (true) {
+    int b =0;
+    while (b<1E6) {
         for (auto it = roads.begin(); it != roads.end(); ++it) {
           std::sort(roundabout.carrbout().begin(),roundabout.carrbout().end(), myfunction);
           (*it).newcar_rd(true, it->rate(), n_max_car, offset);
@@ -75,13 +75,19 @@ int main() {
           //std::cerr << "Macchine nella strada a " << (it->angle())*180/M_PI << " gradi: " << (it->carin()).size() << '\n';
           mean += (it->carin()).size();
         }
-        std::cerr << mean/N_ROADS<<'\n';
+        //std::cerr << mean/N_ROADS<<'\n';
         myfile << ((mean/N_ROADS)) <<std::endl;
         myfile2 << b << " " << ((mean/N_ROADS)) << std::endl;
         b++;
+        if (b%10000 ==0)
+      {
+        std::cerr << (b/1000) << '\n';
+      }
       }
       myfile.close();
       myfile2.close();
+      
+      
     }
     catch (std::runtime_error const& e) {
       std::cerr << e.what() << '\n';
