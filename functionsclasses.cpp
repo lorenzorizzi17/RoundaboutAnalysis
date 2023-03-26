@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cmath>
 #include <random>
+#include<iostream>
 
 #include "functions.hpp"
 
@@ -20,10 +21,10 @@ bool spawn(double const rate) {                        //decides whether a road 
   return false;
 }
 
-int random_call(int const max_exit) {   //extract a random exit
+int random_call(int const max_exit, int current_road) {   //extract a random exit
   std::uniform_int_distribution<int> unif(1,max_exit);
   int assigned_exit = unif(engine);
-  while ((assigned_exit > max_exit) || (assigned_exit == 0)) {
+  while ((assigned_exit > max_exit) || (assigned_exit == 0) || (assigned_exit==current_road)) {
     assigned_exit = unif(engine);
   }
   return assigned_exit;
@@ -109,8 +110,8 @@ std::vector<car>& rbout::carrbout() { return car_rbout; }
 std::size_t rbout::size_rbout() const { return car_rbout.size(); }
 bool rbout::empty_rbout() const { return car_rbout.empty(); }
 
-void rbout::newcar_rbt(double const street_angle, double const offset) {
-  car C = car(street_angle + offset, 0., random_call(n_roads()), true);
+void rbout::newcar_rbt(double const street_angle, double const offset, int current_road) {
+  car C = car(street_angle + offset, 0., random_call(n_roads(), current_road), true);
   car_rbout.push_back(C);
 }
 
@@ -172,9 +173,12 @@ bool road::empty_out() const { return car_out.empty(); }
 
 void road::newcar_rd(bool const input, double rate, int const n_max, const double offset) {
   if (input) {
-    if ((static_cast<int>(size_in()) < n_max) && (spawn(rate))) {
+    if ((static_cast<int>(size_in()) < n_max) && (spawn(rate))) { //controlla che meta
       car C = car(0., 0., 0, false);
       car_in.push_back(C);
+    }
+    if((static_cast<int>(size_in()) >= n_max)){
+      std::cerr << "\n!!!!!!!!!!!!!\n";
     }
   } else {
     car C_ = car(angle() - offset, 1., 0, true);

@@ -25,7 +25,7 @@ class rbout {
   std::vector<car>& carrbout();
   std::size_t size_rbout() const;
   bool empty_rbout() const;
-  void newcar_rbt(double const, const double);
+  void newcar_rbt(double const, const double, int);
   void erase_rbt(std::vector<road>, const double);
   int transfer_rbt(std::vector<road>, const double);
   void evolve_rbt(std::vector<road>, double);

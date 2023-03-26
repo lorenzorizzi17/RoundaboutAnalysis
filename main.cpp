@@ -8,6 +8,7 @@
 
 #include "road.hpp"
 #include "functions.hpp"
+
 // per l'offset, ho che tan(alfa) = (0.5*widthRoad)/((radius+widthRoundabout-0.1*radius))
 int main() {
   try {
@@ -32,7 +33,7 @@ int main() {
     const double v_rbout = 2.85;
     const double dist_from_rbout = (radius -lenghtCar)/radius;
     const double min_dist_road = 1.2*(lenghtCar/lenghtRoad);
-    const double n_max_car = 100;
+    const double n_max_car = 200;
     const double minimum_angle_behind = 50;
     const double minimum_angle_ahead = 25;
 //sumo
@@ -104,7 +105,7 @@ int main() {
                            0.5 * display_height - radius-widthRoundabout);
       cerchio2.setPosition(0.5 * display_height - radius+widthRoundabout,
                            0.5 * display_height - radius+widthRoundabout);
-      double b =0;
+      int b =0;
       while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -127,13 +128,13 @@ int main() {
           strada.rotate(-roads[i].angle() * (180 / M_PI));  // in gradi
           window.draw(strada);
         }
-
+        int number_current_road = 1;
         for (auto it = roads.begin(); it != roads.end(); ++it) {
           std::sort(roundabout.carrbout().begin(),roundabout.carrbout().end(), myfunction);
           (*it).newcar_rd(true, it->rate(), n_max_car, offset);
           (*it).evolve_rd(true, roundabout, minimum_angle_ahead, minimum_angle_behind, v_road, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
           if (it->transfer_rd()) {
-            roundabout.newcar_rbt(it->angle(), offset);
+            roundabout.newcar_rbt(it->angle(), offset, number_current_road);
           }
           it->erase_rd();
           if (roundabout.transfer_rbt(roads, offset) > 0) {
@@ -142,7 +143,7 @@ int main() {
           }
           roundabout.erase_rbt(roads, offset);
           it->evolve_rd(false, roundabout, 0,0, v_road, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
-
+        
           for (car& c : it->carin()) {
             sf::RectangleShape pallino(sf::Vector2f(widthCar,lenghtCar));
             pallino.setTexture(&texturecar);
@@ -178,6 +179,7 @@ int main() {
             pallino__.setPosition(x,y);
             window.draw(pallino__);
           }
+          number_current_road++;
         }
         roundabout.evolve_rbt(roads, v_rbout);
         std::string string = "Numero di macchine in rotonda: " +

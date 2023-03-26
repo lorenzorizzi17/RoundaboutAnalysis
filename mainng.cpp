@@ -24,13 +24,13 @@ int main() {
     
     //simulation parameters
     int const N_ROADS = 4;
-    const double rates[N_ROADS] = {10,10,10,10};  //calcola flusso di ingresso
+    const double rates[N_ROADS] = {12,12,12,12};  //calcola flusso di ingresso
     const double amplificationTransfer = 1.2;
     const double v_road = 3;
     const double v_rbout = 2.85;
     const double dist_from_rbout = (radius -lenghtCar)/radius;
     const double min_dist_road = 1.2*(lenghtCar/lenghtRoad);
-    const double n_max_car = 100;
+    const double n_max_car = 200;
     const double minimum_angle_behind = 50;
     const double minimum_angle_ahead = 25;
 //sumo
@@ -49,15 +49,15 @@ int main() {
     if (roads.size() != N_ROADS) {
         throw std::runtime_error{"Modificare il numero di strade."};
     }
-
     int b =0;
     while (b<1E6) {
+        int number_current_road = 1;
         for (auto it = roads.begin(); it != roads.end(); ++it) {
           std::sort(roundabout.carrbout().begin(),roundabout.carrbout().end(), myfunction);
           (*it).newcar_rd(true, it->rate(), n_max_car, offset);
           (*it).evolve_rd(true, roundabout, minimum_angle_ahead, minimum_angle_behind, v_road, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
           if (it->transfer_rd()) {
-            roundabout.newcar_rbt(it->angle(), offset);
+            roundabout.newcar_rbt(it->angle(), offset, number_current_road);
           }
           it->erase_rd();
           if (roundabout.transfer_rbt(roads, offset) > 0) {
@@ -66,6 +66,7 @@ int main() {
           }
           roundabout.erase_rbt(roads, offset);
           it->evolve_rd(false, roundabout, 0,0, v_road, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
+          number_current_road++;        
         }
         roundabout.evolve_rbt(roads, v_rbout);
         
@@ -81,7 +82,7 @@ int main() {
         b++;
         if (b%10000 ==0)
       {
-        std::cerr << (b/10000) << '\n';
+       //std::cerr << (b/10000) << "\%" << '\n';
       }
       }
       myfile.close();
