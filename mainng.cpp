@@ -24,7 +24,7 @@ int main() {
     
     //simulation parameters
     int const N_ROADS = 4;
-    const double rates[N_ROADS] = {9,9,9,9};  //calcola flusso di ingresso
+    const double rates[N_ROADS] = {10,10,10,10};  //calcola flusso di ingresso
     const double amplificationTransfer = 1.2;
     const double v_road = 3;
     const double v_rbout = 2.85;
@@ -81,7 +81,7 @@ int main() {
         b++;
         if (b%10000 ==0)
       {
-        std::cerr << (b/1000) << '\n';
+        std::cerr << (b/10000) << '\n';
       }
       }
       myfile.close();

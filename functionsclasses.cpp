@@ -10,10 +10,11 @@
 std::random_device rd;
 std::default_random_engine engine(rd());
 
-bool spawn(int const rate) {                        //decides whether a road should spawn a car
-  std::uniform_int_distribution<int> unif(1, 1000);
-  int const test = unif(engine);
-  if (test <= rate) {
+bool spawn(double const rate) {                        //decides whether a road should spawn a car
+  //std::uniform_int_distribution<int> unif(1, 1000);
+  //int const test = unif(engine);
+  double test = ((double) rand() / (RAND_MAX));
+  if (test <= (rate/1000)) {
     return true;
   }
   return false;
@@ -169,7 +170,7 @@ std::size_t road::size_out() const { return car_out.size(); }
 bool road::empty_in() const { return car_in.empty(); }
 bool road::empty_out() const { return car_out.empty(); }
 
-void road::newcar_rd(bool const input, int rate, int const n_max, const double offset) {
+void road::newcar_rd(bool const input, double rate, int const n_max, const double offset) {
   if (input) {
     if ((static_cast<int>(size_in()) < n_max) && (spawn(rate))) {
       car C = car(0., 0., 0, false);
