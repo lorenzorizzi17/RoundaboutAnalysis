@@ -24,13 +24,13 @@ int main() {
     
     //simulation parameters
     int const N_ROADS = 4;
-    const double rates[N_ROADS] = {12,12,12,12};  //calcola flusso di ingresso
+    const double rates[N_ROADS] = {20,20,20,20};  //calcola flusso di ingresso
     const double amplificationTransfer = 1.2;
     const double v_road = 3;
     const double v_rbout = 2.85;
     const double dist_from_rbout = (radius -lenghtCar)/radius;
     const double min_dist_road = 1.2*(lenghtCar/lenghtRoad);
-    const double n_max_car = 200;
+    const double n_max_car = 500;
     const double minimum_angle_behind = 50;
     const double minimum_angle_ahead = 25;
 //sumo
@@ -82,7 +82,7 @@ int main() {
         b++;
         if (b%10000 ==0)
       {
-       //std::cerr << (b/10000) << "\%" << '\n';
+       std::cerr << (b/10000) << "\%" << '\n';
       }
       }
       myfile.close();

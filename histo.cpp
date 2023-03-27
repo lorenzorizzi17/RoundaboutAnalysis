@@ -2,7 +2,7 @@
 #include<fstream>
 
 void histo() {
-    TH1F* histo = new TH1F("Flux in: 12", "Mean n. of cars in roads", 400,0,100);
+    TH1F* histo = new TH1F("Flux in: 13", "Mean n. of cars in roads", 40,0,10);
     histo->StatOverflows(true);
     TCanvas* c1 = new TCanvas("","",800,500);
     c1->cd(1);
@@ -20,5 +20,5 @@ void histo() {
     
     std::cout << "\nLa media è: " << histo->GetMean() << '\n'; 
     std::cout << "\nLa SD è: " << histo->GetRMS() << '\n'; 
-    c1->Print("histo_12_6.pdf");
+    //c1->Print("histo_13_6.pdf");
 }

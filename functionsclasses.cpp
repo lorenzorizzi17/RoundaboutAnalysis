@@ -178,7 +178,8 @@ void road::newcar_rd(bool const input, double rate, int const n_max, const doubl
       car_in.push_back(C);
     }
     if((static_cast<int>(size_in()) >= n_max)){
-      std::cerr << "\n!!!!!!!!!!!!!\n";
+      //std::cerr << "\n!!!!!!!!!!!!!\n";
+      throw std::runtime_error{"Raggiunto il numero massimo di macchine su di una strada."};
     }
   } else {
     car C_ = car(angle() - offset, 1., 0, true);
