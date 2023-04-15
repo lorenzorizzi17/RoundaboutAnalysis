@@ -13,5 +13,5 @@ void timeseries() {
     graph->Fit("fit");
     std::cout << "\nIl fit restituisce " << fit->GetParameter(0) <<'\n';
     gStyle->SetOptFit(0000);
-    c1->Print("timeseries_20_6.pdf");
+    c1->Print("timeseries_21_6.pdf");
 }

@@ -126,8 +126,8 @@ void rbout::erase_rbt(std::vector<road> roads, double offset) {
 
 int rbout::transfer_rbt(std::vector<road> roads, const double offset) {
   auto it = std::find_if(car_rbout.begin(), car_rbout.end(), [&](car& c) {
-    return module360(std::abs(c.theta() - roads[c.exit() - 1].angle() +
-                              offset)) < 0.05;
+    return std::abs(module360(c.theta()) - roads[c.exit() - 1].angle() +
+                              offset) < 0.05;  //forse da mettere prima module360?
   });
   if (it == car_rbout.end()) {
     return 0;
@@ -173,12 +173,11 @@ bool road::empty_out() const { return car_out.empty(); }
 
 void road::newcar_rd(bool const input, double rate, int const n_max, const double offset) {
   if (input) {
-    if ((static_cast<int>(size_in()) < n_max) && (spawn(rate))) { //controlla che meta
-      car C = car(0., 0., 0, false);
+    if ((static_cast<int>(size_in()) < n_max) && (spawn(rate))) { 
+      car C = car(0., 0., 0, false);    //qui 
       car_in.push_back(C);
     }
     if((static_cast<int>(size_in()) >= n_max)){
-      //std::cerr << "\n!!!!!!!!!!!!!\n";
       throw std::runtime_error{"Raggiunto il numero massimo di macchine su di una strada."};
     }
   } else {
@@ -222,7 +221,7 @@ bool road::transfer_rd() {
   auto it = std::find_if(car_in.begin(), car_in.end(),
                          [](car& car) { return car.t() >= 1; });
   if (it != car_in.end()) {
-    car_in.erase(it);
+    car_in.erase(it);   
     return true;
   } else {
     return false;

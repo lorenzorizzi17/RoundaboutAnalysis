@@ -27,7 +27,7 @@ int main() {
     
     //simulation parameters
     int const N_ROADS = 4;
-    const double rates[N_ROADS] = {10,10,10,10};  //calcola flusso di ingresso
+    const double rates[N_ROADS] = {12.5,12.5,12.5,12.5};  //calcola flusso di ingresso
     const double amplificationTransfer = 1.2;
     const double v_road = 3;
     const double v_rbout = 2.85;
@@ -39,12 +39,16 @@ int main() {
 //sumo
 
     rbout roundabout(N_ROADS, radius);
-    std::ofstream myfile;
-    std::ofstream myfile2;
-    myfile.open("data.dat");
-    myfile2.open("timeseries.dat");
-
     std::vector<road> roads;
+
+    std::ofstream roadsfile[N_ROADS];
+    std::ofstream myfile2;
+    for(int i{0};i < N_ROADS;i++){
+      std::string name = "/home/lorenzo17/Roundabout2/datas/road" + std::to_string(i) + ".dat";
+      roadsfile[i].open(name);
+    }
+
+
     for (int k = 0; k < roundabout.n_roads(); k++) {
       road strada_test(2 * k * M_PI / roundabout.n_roads(), rates[k]);
       roads.push_back(strada_test);
@@ -57,7 +61,7 @@ int main() {
                               "Roundabout", sf::Style::Default);
       window.setFramerateLimit(fps);
       sf::Font font;
-      if (!font.loadFromFile("font.ttf")) {
+      if (!font.loadFromFile("graphics/font.ttf")) {
         throw std::runtime_error{
             "Attenzione! Il font non è stato caricato correttamente.Controlla "
             "che il file esista e sia nella giusta working directory"};
@@ -69,7 +73,7 @@ int main() {
       text.setPosition(0.025 * display_height, 0.01 * display_height);
 
       sf::Texture texture;
-      if (!texture.loadFromFile("rbout.jpg", sf::IntRect(0, 0, display_height,
+      if (!texture.loadFromFile("graphics/rbout.jpg", sf::IntRect(0, 0, display_height,
                                                            display_height))) {
         throw std::runtime_error{
             "Attenzione! L'immagine non è stata caricata correttamente. "
@@ -79,7 +83,7 @@ int main() {
       texture.setSmooth(true);
 
       sf::Texture texture2;
-      if (!texture2.loadFromFile("texture2.jpg", sf::IntRect(0, 0, 0, 0))) {
+      if (!texture2.loadFromFile("graphics/texture2.jpg", sf::IntRect(0, 0, 0, 0))) {
         throw std::runtime_error{
             "Attenzione! L'immagine non è stata caricata correttamente. "
             "Controlla che il file esista e sia nella giusta working "
@@ -88,7 +92,7 @@ int main() {
       texture2.setSmooth(true);
 
       sf::Texture texturecar;
-      if (!texturecar.loadFromFile("texture.jpg", sf::IntRect(0, 0, display_height,
+      if (!texturecar.loadFromFile("graphics/texture.jpg", sf::IntRect(0, 0, display_height,
                                                            display_height))) {
         throw std::runtime_error{
             "Attenzione! L'immagine non è stata caricata correttamente. "
@@ -105,7 +109,10 @@ int main() {
                            0.5 * display_height - radius-widthRoundabout);
       cerchio2.setPosition(0.5 * display_height - radius+widthRoundabout,
                            0.5 * display_height - radius+widthRoundabout);
-      int b =0;
+
+
+
+      int b = 0;
       while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -130,20 +137,15 @@ int main() {
         }
         int number_current_road = 1;
         for (auto it = roads.begin(); it != roads.end(); ++it) {
-          std::sort(roundabout.carrbout().begin(),roundabout.carrbout().end(), myfunction);
-          (*it).newcar_rd(true, it->rate(), n_max_car, offset);
-          (*it).evolve_rd(true, roundabout, minimum_angle_ahead, minimum_angle_behind, v_road, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
+          //std::sort(roundabout.carrbout().begin(),roundabout.carrbout().end(), myfunction);
+          it->newcar_rd(true, it->rate(), n_max_car, offset);
+          it->evolve_rd(true, roundabout, minimum_angle_ahead, minimum_angle_behind, v_road, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
           if (it->transfer_rd()) {
             roundabout.newcar_rbt(it->angle(), offset, number_current_road);
           }
           it->erase_rd();
-          if (roundabout.transfer_rbt(roads, offset) > 0) {
-            auto a = roundabout.transfer_rbt(roads, offset);
-            (roads[a - 1]).newcar_rd(false, 0, n_max_car, offset);
-          }
-          roundabout.erase_rbt(roads, offset);
           it->evolve_rd(false, roundabout, 0,0, v_road, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
-        
+          roadsfile[number_current_road-1] << (it->carin()).size() << std::endl;
           for (car& c : it->carin()) {
             sf::RectangleShape pallino(sf::Vector2f(widthCar,lenghtCar));
             pallino.setTexture(&texturecar);
@@ -181,6 +183,11 @@ int main() {
           }
           number_current_road++;
         }
+        if (roundabout.transfer_rbt(roads, offset) > 0) {
+            auto a = roundabout.transfer_rbt(roads, offset);
+            (roads[a - 1]).newcar_rd(false, 0, n_max_car, offset);
+          }
+          roundabout.erase_rbt(roads, offset);
         roundabout.evolve_rbt(roads, v_rbout);
         std::string string = "Numero di macchine in rotonda: " +
                              std::to_string(roundabout.size_rbout());
@@ -190,18 +197,17 @@ int main() {
         double mean{0};
         for (auto it = roads.begin(); it != roads.end(); it++)
         {
-          //std::cerr << "Macchine nella strada a " << (it->angle())*180/M_PI << " gradi: " << (it->carin()).size() << '\n';
+          std::cerr << "Macchine nella strada a " << (it->angle())*180/M_PI << " gradi: " << (it->carin()).size() << '\n';
           mean += (it->carin()).size();
         }
-        std::cerr << mean/N_ROADS<<'\n';
-        myfile << ((mean/N_ROADS)) <<std::endl;
-        myfile2 << b << " " << ((mean/N_ROADS)) << std::endl;
+        std::cerr <<'\n';
         window.draw(text);
         window.display();
         b++;
       }
-      myfile.close();
-      myfile2.close();
+      for(int i=0;i < N_ROADS; i++){
+        roadsfile[i].close();
+      }
     }
     catch (std::runtime_error const& e) {
       std::cerr << e.what() << '\n';

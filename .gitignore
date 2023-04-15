@@ -1,2 +1,5 @@
 *.Identifier
 *.out
+*.dat
+timeseries/
+datas/
