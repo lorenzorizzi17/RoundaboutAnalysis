@@ -24,7 +24,7 @@ int main() {
     
     //simulation parameters
     int const N_ROADS = 4;
-    const double rates[N_ROADS] = {8.5,8.5,8.5,8.5};  //calcola flusso di ingresso
+    const double rates[N_ROADS] = {13,13,13,13};  //calcola flusso di ingresso
     const double amplificationTransfer = 1.2;
     const double v_road = 3;
     const double v_rbout = 2.85;
@@ -58,7 +58,6 @@ int main() {
     int b = 0;
     while (b<1E7-1) {
         int number_current_road = 1;
-
         //making the calculation for every road
         for (auto it = roads.begin(); it != roads.end(); ++it) {
           it->newcar_rd(true, it->rate(), n_max_car, offset);

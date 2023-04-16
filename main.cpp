@@ -137,7 +137,7 @@ int main() {
         }
         int number_current_road = 1;
         for (auto it = roads.begin(); it != roads.end(); ++it) {
-          //std::sort(roundabout.carrbout().begin(),roundabout.carrbout().end(), myfunction);
+          //std::sort(roundabout.carrbout().begin(),roundabout.carrbout().end(), compareCarDistance);
           it->newcar_rd(true, it->rate(), n_max_car, offset);
           it->evolve_rd(true, roundabout, minimum_angle_ahead, minimum_angle_behind, v_road, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
           if (it->transfer_rd()) {

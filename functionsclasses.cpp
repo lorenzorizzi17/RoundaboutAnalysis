@@ -5,15 +5,17 @@
 
 #include "functions.hpp"
 
-////////////////////////////////////////////////////
-/////            free functions               //////
-////////////////////////////////////////////////////
 std::random_device rd;
 std::default_random_engine engine(rd());
 
+
+
+////////////////////////////////////////////////////
+/////            free functions               //////
+////////////////////////////////////////////////////
+//(std::abs(std::abs(street_angle + offset - module360((c).theta())) *180 / M_PI) < min_ang) || (std::abs(std::abs(street_angle + offset - module360((c).theta())) * 180 / M_PI) > (360. - min_ang))
+
 bool spawn(double const rate) {                        //decides whether a road should spawn a car
-  //std::uniform_int_distribution<int> unif(1, 1000);
-  //int const test = unif(engine);
   double test = ((double) rand() / (RAND_MAX));
   if (test <= (rate/1000)) {
     return true;
@@ -49,16 +51,9 @@ bool is_free(double const street_angle, rbout& roundabout,    //check if there's
   }
 }
 
-
-
-//(std::abs(std::abs(street_angle + offset - module360((c).theta())) *180 / M_PI) < min_ang) || (std::abs(std::abs(street_angle + offset - module360((c).theta())) * 180 / M_PI) > (360. - min_ang))
-
-
-
-bool myfunction(car const& c1, car const& c2) {    
+bool compareCarDistance(car const& c1, car const& c2) {    
   return module360(c2.theta()) > module360(c1.theta());
 }
-
 
 double distance_from_road(car const& c, std::vector<road>const& roads) {   
   if (module360(c.theta()) < roads[c.exit()-1].angle()) {
@@ -126,9 +121,7 @@ void rbout::erase_rbt(std::vector<road> roads, double offset) {
 
 int rbout::transfer_rbt(std::vector<road> roads, const double offset) {
   auto it = std::find_if(car_rbout.begin(), car_rbout.end(), [&](car& c) {
-    return std::abs(module360(c.theta()) - roads[c.exit() - 1].angle() +
-                              offset) < 0.05;  //forse da mettere prima module360?
-  });
+    return std::abs(module360(c.theta()) - roads[c.exit() - 1].angle() + offset) < 0.05;});
   if (it == car_rbout.end()) {
     return 0;
   } else {
@@ -139,7 +132,7 @@ int rbout::transfer_rbt(std::vector<road> roads, const double offset) {
 void rbout::evolve_rbt(std::vector<road> roads, double v_rbout) {
   if (car_rbout.size() != 1) {
     for (auto it = car_rbout.begin(); it != car_rbout.end(); ++it) {
-      std::sort(car_rbout.begin(),car_rbout.end(),myfunction);
+      std::sort(car_rbout.begin(),car_rbout.end(),compareCarDistance);
       double const angle_difference = distance_from_road(*it,roads);
       if (std::abs(module360(angle_difference)) >= 0.05) {  //
         if (it != car_rbout.end()-1) {
@@ -159,7 +152,7 @@ void rbout::evolve_rbt(std::vector<road> roads, double v_rbout) {
 }
 
 ///////////////////////////////////////
-//////      road functions      ////////
+//////      road functions     ////////
 ///////////////////////////////////////
 
 double road::angle() const { return angle_; }

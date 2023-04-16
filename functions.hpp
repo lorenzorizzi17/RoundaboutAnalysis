@@ -11,7 +11,7 @@ double module360(double);
 
 bool is_free(double const, rbout &, double const, double const, double const);
 
-bool myfunction(car const&, car const&);
+bool compareCarDistance(car const&, car const&);
 
 double distance_from_road(car const&, std::vector<road>const&);
 

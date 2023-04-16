@@ -9,9 +9,11 @@ void histo() {
     gStyle->SetOptTitle(0);
     gStyle->SetStatBorderSize(4);
     gStyle->SetStatX(0.9);
-   gStyle->SetStatY(0.9);
-   gStyle->SetStatW(0.5); 
-   gStyle->SetStatH(0.2);
+    gStyle->SetStatY(0.9);
+    gStyle->SetStatW(0.5); 
+    gStyle->SetStatH(0.2);
+
+    
     TH1F* histos[4];
     std::string name = "Number of cars in road n. ";
     for(int i = 0;i<4;i++){
@@ -103,5 +105,5 @@ void histo() {
     meanvalues.close();
     sdvalues.close();
 
-    c1->Print("/home/lorenzo17/Roundabout2/histopdf/histo4_8d5_6.pdf");
+    c1->Print("/home/lorenzo17/Roundabout2/histopdf/histo4_13_6.pdf");
 }
