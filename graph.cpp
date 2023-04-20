@@ -28,7 +28,7 @@ void graph(){
     TGraphErrors* graph2 = new TGraphErrors(11, fluxin, meanRoad2, 0, semiAmpRoad2);
     TGraphErrors* graph3 = new TGraphErrors(11, fluxin, meanRoad3, 0, semiAmpRoad3);
     TGraphErrors* graph4 = new TGraphErrors(11, fluxin, meanRoad4, 0, semiAmpRoad4);
-    TGraph* graphtot = new TGraph(9,fluxin, meanTotal);
+    TGraph* graphtot = new TGraph(11,fluxin, meanTotal);
 
 
     TCanvas *c1 = new TCanvas("","",1000,700);
@@ -36,6 +36,10 @@ void graph(){
     c1->cd(1);
     
     graph1->SetTitle("Road 1");
+    graph1->GetXaxis()->SetTitle("Input flow");
+    graph1->GetYaxis()->SetTitle("Mean n. of cars");
+    graph1->SetMinimum(-1);
+    graph1->SetMaximum(15);
     graph1->SetMarkerSize(0.5);
     graph1->SetMarkerStyle(21);
     graph1->SetLineColor(40);
@@ -45,6 +49,10 @@ void graph(){
     c1->cd(2);
     
     graph2->SetTitle("Road 2");
+    graph2->GetXaxis()->SetTitle("Input flow");
+    graph2->GetYaxis()->SetTitle("Mean n. of cars");
+    graph2->SetMinimum(-1);
+    graph2->SetMaximum(15);
     graph2->SetMarkerSize(0.5);
     graph2->SetMarkerStyle(21);
     graph2->SetLineColor(30);
@@ -54,6 +62,10 @@ void graph(){
     c1->cd(3);  
     
     graph3->SetTitle("Road 3");
+    graph3->GetXaxis()->SetTitle("Input flow");
+    graph3->GetYaxis()->SetTitle("Mean n. of cars");
+    graph3->SetMinimum(-1);
+    graph3->SetMaximum(15);
     graph3->SetMarkerSize(0.5);
     graph3->SetMarkerStyle(21);
     graph3->SetLineColor(46);
@@ -63,6 +75,10 @@ void graph(){
     c1->cd(4);
     
     graph4->SetTitle("Road 4");
+    graph4->GetXaxis()->SetTitle("Input flow");
+    graph4->GetYaxis()->SetTitle("Mean n. of cars");
+    graph4->SetMinimum(-1);
+    graph4->SetMaximum(15);
     graph4->SetMarkerSize(0.5);
     graph4->SetMarkerStyle(21);
     graph4->SetLineColor(42);
@@ -74,6 +90,7 @@ void graph(){
     c2->Divide(1,2);
     c2->cd(1);
     graph1->Draw("ALP");
+    graph1->SetTitle("Mean value vs input stream (all road displayed)");
     graph2->Draw("SAME");
     graph3->Draw("SAME");
     graph4->Draw("SAME");
@@ -87,7 +104,11 @@ void graph(){
     leg->Draw();
     
     c2->cd(2);
-    graphtot->SetTitle("Mean value (all road considered)");
+    graphtot->SetTitle("Mean value vs input stream (mean of all road)");
+    graphtot->GetXaxis()->SetTitle("Input flow");
+    graphtot->GetYaxis()->SetTitle("Mean n. of cars");
+    graphtot->SetMinimum(-1);
+    graphtot->SetMaximum(15);
     graphtot->SetMarkerSize(0.5);
     graphtot->SetMarkerStyle(21);
     graphtot->SetLineWidth(2);

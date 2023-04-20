@@ -24,24 +24,27 @@ int main() {
     
     //simulation parameters
     int const N_ROADS = 4;
-    const double rates[N_ROADS] = {13,13,13,13};  //calcola flusso di ingresso
+    const double rates[N_ROADS] = {15,15,15,15};  //calcola flusso di ingresso
     const double amplificationTransfer = 1.2;
     const double v_road = 3;
     const double v_rbout = 2.85;
     const double dist_from_rbout = (radius -lenghtCar)/radius;
     const double min_dist_road = 1.2*(lenghtCar/lenghtRoad);
-    const double n_max_car = 200;
+    const double n_max_car = 800;
     const double minimum_angle_behind = 50;
     const double minimum_angle_ahead = 25;
 
     //file iostream managing
     std::ofstream roadsfile[N_ROADS];
-    std::ofstream myfile2;
+    std::ofstream timesfile[N_ROADS];
     for(int i{0};i < N_ROADS;i++){
       std::string name = "/home/lorenzo17/Roundabout2/datas/road" + std::to_string(i) + ".dat";
       roadsfile[i].open(name);
     }
-    myfile2.open("/home/lorenzo17/Roundabout2/timeseries/timeseries.dat");
+    for(int i{0};i < N_ROADS;i++){
+      std::string name = "/home/lorenzo17/Roundabout2/timeseries/time" + std::to_string(i) + ".dat";
+      timesfile[i].open(name);
+    }
 
     //roundabout and roads creation
     rbout roundabout(N_ROADS, radius);
@@ -68,6 +71,7 @@ int main() {
           it->erase_rd();
           it->evolve_rd(false, roundabout, 0,0, v_road, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
           roadsfile[number_current_road-1] << (it->carin()).size() << std::endl;
+          timesfile[number_current_road-1] << b << " " << (it->carin()).size() << std::endl;
           number_current_road++;        
         }
         //making the calculation for the roundabout
@@ -79,14 +83,12 @@ int main() {
         roundabout.evolve_rbt(roads, v_rbout);
         
         //statistic part: computing the mean number of car
-        double mean{0};
+        /* double mean{0};
         for (auto it = roads.begin(); it != roads.end(); it++)
         {
-          //std::cerr << "Macchine nella strada a " << (it->angle())*180/M_PI << " gradi: " << (it->carin()).size() << '\n';
+          std::cerr << "Macchine nella strada a " << (it->angle())*180/M_PI << " gradi: " << (it->carin()).size() << '\n';
           mean += (it->carin()).size();
-        }
-        //std::cerr << mean/N_ROADS<<'\n';
-        myfile2 << b << " " << ((mean/N_ROADS)) << std::endl;
+        } */
 
         //updating the cycle and printing info
         b++;
@@ -101,6 +103,9 @@ int main() {
     //closing the file after the algorithm has finished
     for(int i=0;i < N_ROADS; i++){
         roadsfile[i].close();
+    }
+    for(int i=0;i < N_ROADS; i++){
+        timesfile[i].close();
     }
       
       

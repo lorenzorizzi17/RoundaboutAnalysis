@@ -121,7 +121,7 @@ void rbout::erase_rbt(std::vector<road> roads, double offset) {
 
 int rbout::transfer_rbt(std::vector<road> roads, const double offset) {
   auto it = std::find_if(car_rbout.begin(), car_rbout.end(), [&](car& c) {
-    return std::abs(module360(c.theta()) - roads[c.exit() - 1].angle() + offset) < 0.05;});
+    return module360(std::abs(c.theta() -roads[c.exit() - 1].angle() + offset)) < 0.05;});
   if (it == car_rbout.end()) {
     return 0;
   } else {
@@ -134,7 +134,7 @@ void rbout::evolve_rbt(std::vector<road> roads, double v_rbout) {
     for (auto it = car_rbout.begin(); it != car_rbout.end(); ++it) {
       std::sort(car_rbout.begin(),car_rbout.end(),compareCarDistance);
       double const angle_difference = distance_from_road(*it,roads);
-      if (std::abs(module360(angle_difference)) >= 0.05) {  //
+      if (module360(std::abs((angle_difference))) >= 0.05) {  //
         if (it != car_rbout.end()-1) {
           it->evolve_ang(v_rbout);
         } else {

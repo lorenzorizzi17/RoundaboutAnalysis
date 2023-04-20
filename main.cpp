@@ -27,7 +27,7 @@ int main() {
     
     //simulation parameters
     int const N_ROADS = 4;
-    const double rates[N_ROADS] = {12.5,12.5,12.5,12.5};  //calcola flusso di ingresso
+    const double rates[N_ROADS] = {10,10,10,10};  //calcola flusso di ingresso
     const double amplificationTransfer = 1.2;
     const double v_road = 3;
     const double v_rbout = 2.85;
