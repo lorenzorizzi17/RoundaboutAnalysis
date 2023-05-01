@@ -24,7 +24,7 @@ int main() {
     
     //simulation parameters
     int const N_ROADS = 4;
-    const double rates[N_ROADS] = {15,15,15,15};  //calcola flusso di ingresso
+    const double rates[N_ROADS] = {8,8,8,8};  //calcola flusso di ingresso
     const double amplificationTransfer = 1.2;
     const double v_road = 3;
     const double v_rbout = 2.85;
@@ -59,7 +59,12 @@ int main() {
 
     //starting graphic cycle
     int b = 0;
-    while (b<1E7-1) {
+    /* for (int i = 0; i < 300; i++)
+    {
+      roads[0].newcar_rd(true,(RAND_MAX/1000),n_max_car,offset);
+    } */
+    
+    while (b<1E7) {
         int number_current_road = 1;
         //making the calculation for every road
         for (auto it = roads.begin(); it != roads.end(); ++it) {
@@ -72,7 +77,8 @@ int main() {
           it->evolve_rd(false, roundabout, 0,0, v_road, dist_from_rbout, min_dist_road, offset, amplificationTransfer);
           roadsfile[number_current_road-1] << (it->carin()).size() << std::endl;
           timesfile[number_current_road-1] << b << " " << (it->carin()).size() << std::endl;
-          number_current_road++;        
+          number_current_road++;   
+          //std::cerr << "Macchine nella strada a " << (it->angle())*180/M_PI << " gradi: " << (it->carin()).size() << '\n';     
         }
         //making the calculation for the roundabout
         if (roundabout.transfer_rbt(roads, offset) > 0) {
@@ -86,7 +92,7 @@ int main() {
         /* double mean{0};
         for (auto it = roads.begin(); it != roads.end(); it++)
         {
-          std::cerr << "Macchine nella strada a " << (it->angle())*180/M_PI << " gradi: " << (it->carin()).size() << '\n';
+          
           mean += (it->carin()).size();
         } */
 
