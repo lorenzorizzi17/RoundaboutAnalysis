@@ -28,7 +28,7 @@ This will automatically create in `/build` directory an executable file, `Rounda
 
 `$ build/Roundaboutng.out`
 
-## How to analyse data
+## How to analyze data
 At every run, the program store in `/data` folder some .txt files (namely `data0.dat`, `data1.dat`, ...). These contain the number of cars in every road at every istant. The same structure caracterizes `time0.dat`, `times1.dat` files, but in this case the first column indicates the current time (in clock cycle).
 
 To analyze these data, I created a ROOT macro (inside `/ROOT` directory). The macro contains two main functions, namely:
