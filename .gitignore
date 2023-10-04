@@ -1,5 +1,8 @@
 *.Identifier
 *.out
 *.dat
-timeseries/
-datas/
+data/
+build/
+histopdf/
+timeseriespdf/
+scripts/

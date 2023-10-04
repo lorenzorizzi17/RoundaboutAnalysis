@@ -11,4 +11,26 @@ With the help of the framework ROOT, one can analyze the condition that should b
 
 ![Recording 2023-09-09 at 22 24 03](https://github.com/lorenzorizzi17/RoundaboutAnalysis/assets/102590961/be589bbe-5217-461d-b71d-651df605f64e)
 
-_P.S.: The code in this repo is implemented via SFML library. The GIF up there come from the adaptation of the same code I've made in Unity_
+_P.S.: The code in this repo is implemented via SFML library. The GIF up there comes from the adaptation of the same code I've made in Unity_
+
+## How to build and run the program (CMake)
+To correctly compile and build the program, one can take advantage of the CMake software. Just enter the terminal and, in the general directory, type:
+
+`$ cmake -DGRAPHIC=OFF -S ./source -B ./build `
+
+The option `-DGRAPHIC` can be turned on to visualize graphically the roundabout simulation. Clearly, this will increase significantly the time needed at run-time for the simulation to store data. Therefore I highly suggest to set this variable off when only analysing different scenarios.
+
+Once the CMake configuration has finished, build the code:
+
+`$ cmake --build build`
+
+This will automatically create in `/build` directory an executable file, `Roundaboutng.out` (or `Roundabout.out` if you set graphic mode on). To run the code, simply digit:
+
+`$ build/Roundaboutng.out`
+
+## How to analyse data
+At every run, the program store in `/data` folder some .txt files (namely `data0.dat`, `data1.dat`, ...). These contain the number of cars in every road at every istant. The same structure caracterizes `time0.dat`, `times1.dat` files, but in this case the first column indicates the current time (in clock cycle).
+
+To analyze these data, I created a ROOT macro (inside `/ROOT` directory). The macro contains two main functions, namely:
+* timeseries(): plot number of cars vs time in a graph and print out the linear coefficient of the fitting line
+* histo(): plot a histogram for every road evaluating the occurencies in the number of cars
