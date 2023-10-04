@@ -1,1 +1,0 @@
-/usr/bin/c++  -Wall -Wextra CMakeFiles/Roundaboutng.out.dir/mainng.cpp.o CMakeFiles/Roundaboutng.out.dir/functionsclasses.cpp.o -o Roundaboutng.out 
